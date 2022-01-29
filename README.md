@@ -28,7 +28,7 @@
 ```
 ## Auth
 ```javascript
-
+  app.post("login") //login a user
 
 ```
 
