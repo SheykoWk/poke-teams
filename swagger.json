@@ -1,0 +1,148 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "pokedex, teams administration",
+        "description": "It's an API that makes requests to the pokeapi, this API manage teams with users and authentication",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Sahid Kick aka(sh3yk0)",
+            "email": "sheyko.wk@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api/v1",
+            "description": "dev server"
+        },
+        {
+            "url": "https://poketeams-sh3yk0.herokuapp.com/",
+            "description": "prod server"
+        }
+    ],
+    "paths": {
+        "/team": {
+            "get": {
+                "security": [
+                    {
+                        "jwt_token": []
+                    }
+                ],
+                "tags": ["team"],
+                "description": "Return the team of the current user",
+                "responses": {
+                    "200": {
+                        "description": "Consult the pokemon team"
+                    },
+                    "401":{
+                        "description": "JWT no available"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["team"],
+                "description": "Agregar un usuario en el sistema",
+                "responses": {
+                    "201": {
+                        "description": "Se ha creado satisfactoriamente un usuario en el sistema"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/team"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "put": {
+                "tags": ["users"],
+                "description": "Actualizar un usuario en el sistema",
+                "responses": {
+                    "200": {
+                        "description": "Se ha actualizado satisfactoriamente un usuario en el sistema"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "El id del usuario a actualizar",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/user"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/conversations": {
+            "get": {
+                "tags": ["conversations"],
+                "description": "Obtener las conversaciones",
+                "responses": {
+                    "200": {
+                        "description": "Obtener una lista de conversaciones"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "user": {
+                "type": "object",
+                "required": [
+                    "firstname",
+                    "lastname",
+                    "email",
+                    "password",
+                    "phone"
+                ],
+                "properties": {
+                    "firstname": {
+                        "type": "string"
+                    },
+                    "lastname": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Una contraseña de 8 caracteres como longitud minima"
+                    },
+                    "profile_image": {
+                        "type": "string",
+                        "example": "https://i.stack.imgur.com/h1SaI.png"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "format": "+52(###)#######"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "jwt_token": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT Token authorization"
+            }
+        }
+    }
+}

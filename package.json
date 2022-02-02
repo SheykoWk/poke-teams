@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
-    "start": "node app.js"
+    "test": "./node_modules/.bin/mocha **/**/*.test.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "Sh3yk0",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "chai": "^4.3.6",
     "chai-http": "^4.3.0",
-    "mocha": "^9.2.0"
+    "mocha": "^9.2.0",
+    "nodemon": "^2.0.15"
   }
 }
