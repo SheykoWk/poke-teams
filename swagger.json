@@ -40,17 +40,17 @@
             },
             "post": {
                 "tags": ["team"],
-                "description": "Agregar un usuario en el sistema",
+                "description": "Add a pokemon to the team of the current user",
                 "responses": {
                     "201": {
-                        "description": "Se ha creado satisfactoriamente un usuario en el sistema"
+                        "description": "Pokemon added succesfully to the team"
                     }
                 },
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/team"
+                                "$ref": "#/components/schemas/user"
                             }
                         }
                     }
