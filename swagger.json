@@ -98,7 +98,19 @@
                     }
                 }
             }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["authentication"],
+                "description": "Obtener un token de usuario autenticado",
+                "responses": {
+                    "200": {
+                        "description": "Obtener el token de usuario autenticado"
+                    }
+                }
+            }
         }
+        
     },
     "components": {
         "schemas": {
