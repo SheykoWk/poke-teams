@@ -1,12 +1,14 @@
 const axios = require("axios");
 const { getUser } = require("../auth/users.controller");
+const { to } = require("../tools/to");
 const teamsController = require("./teams.controller");
 
-const getTeamFromUser = (req, res) => {
+const getTeamFromUser = async (req, res) => {
     let user = getUser(req.user.userId.userId);
+    let team = await teamsController.getTeamOfUser(req.user.userId.userId);
     res.status(200).json({
         trainer: user.username,
-        team: teamsController.getTeamOfUser(req.user.userId.userId),
+        team: team,
     });
 };
 
@@ -15,21 +17,25 @@ const setTeamToUser = (req, res) => {
     res.status(200).send();
 };
 
-const addPokemonToTeam = (req, res) => {
+const addPokemonToTeam = async (req, res) => {
     let pokemonName = req.body.name;
-    axios
-        .get(`https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`)
-        .then((response) => {
-            let pokemon = {
-                name: pokemonName,
-                pokedexNumber: response.data.id,
-            };
-            teamsController.addPokemon(req.user.userId.userId, pokemon);
-            res.status(201).json(pokemon);
-        })
-        .catch((err) => {
-            res.status(400).json({ message: err });
-        });
+    let [pokeapiError, pokeapiResponse] = 
+        await to(axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`));
+    if (pokeapiError) {
+        return res.status(400).json({ message: pokeapiError });
+    }
+    let pokemon = {
+        name: pokemonName,
+        pokedexNumber: pokeapiResponse.data.id,
+    };
+        let [errorAdd, responseAdd] = await to(teamsController.addPokemon(req.user.userId.userId, pokemon));
+        console.log("error add", errorAdd)
+        console.log("result add", responseAdd)
+        if(errorAdd){
+            return res.status(400).json({ message: "You have already 6 pokemons in your team" });
+        }
+        return res.status(201).json(pokemon);
+    
 };
 
 const deletePokemonFromTeam = (req, res) => {

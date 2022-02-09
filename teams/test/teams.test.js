@@ -11,9 +11,8 @@ before((done) => {
     usersController.registerUser("admin", "4321");
     done();
 });
-afterEach((done) => {
-    teamsController.cleanUpTeam();
-    done();
+afterEach(async() => {
+    await teamsController.cleanUpTeam();
 });
 
 describe("Suite Team's test", () => {
@@ -128,6 +127,38 @@ describe("Suite Team's test", () => {
                                         done();
                                     });
                             });
+                    });
+            });
+    });
+    it("Should not be able to add pokemon if yo already have 6", (done) => {
+        let team = [
+            { name: "Charizard" },
+            { name: "Pikachu" },
+            { name: "Blastoise" },
+            { name: "Charizard" },
+            { name: "Pikachu" },
+            { name: "Blastoise" },
+        ];
+        chai.request(app)
+            .post("/auth/login")
+            .set("content-type", "application/json")
+            .send({ user: "sheyko", password: "1234" })
+            .end((err, res) => {
+                const token = res.body.token;
+                chai.assert.equal(res.status, 200);
+                chai.request(app)
+                    .put("/team")
+                    .send({ team: team })
+                    .set("Authorization", `JWT ${token}`)
+                    .end((err, res) => {
+                        chai.request(app)
+                            .post('/team/pokemons')
+                            .send({name: 'Vibrava'})
+                            .set('Authorization', `JWT ${token}`)
+                            .end((err, res) => {
+                                chai.assert.equal(res.status, 400);
+                                done();
+                            })
                     });
             });
     });
