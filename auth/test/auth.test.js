@@ -3,10 +3,9 @@ const chaiHttp = require("chai-http");
 const { app } = require("../../app");
 const usersController = require("../users.controller");
 
-before((done) => {  
-    usersController.registerUser("sheyko", "1234");
-    usersController.registerUser("admin", "4321");
-    done()
+before(async () => {  
+    await usersController.registerUser("sheyko", "1234");
+    await usersController.registerUser("admin", "4321");
 })
 
 chai.use(chaiHttp);
@@ -56,7 +55,6 @@ describe("Suite Auth Test", () => {
             });
     });
 });
-after((done) => {
-    usersController.cleanUpUsers()
-    done()
+after(async () => {
+    await usersController.cleanUpUsers()
 })

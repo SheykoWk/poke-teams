@@ -1,6 +1,7 @@
 // Dependencies
 const express = require("express");
 require("dotenv").config();
+require('./database')
 
 // Routes
 const authRoutes = require("./auth/auth.router").router;
@@ -12,7 +13,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 setupMiddlewares(app)
-
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World!");
