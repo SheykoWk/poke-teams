@@ -1,4 +1,8 @@
+const mongoose = require('mongoose')
 let teamsDatabase = {};
+
+const Team = mongoose.model("Teams", {UserId: String, team: []});
+
 
 const cleanUpTeam = () => {
     return new Promise((resolve, reject) =>{
@@ -11,8 +15,9 @@ const cleanUpTeam = () => {
 };
 
 const bootstrapTeam = (userId) => {
-    return new Promise((resolve, reject) => {
-        teamsDatabase[userId] = [];
+    return new Promise(async(resolve, reject) => {
+        let newTeam = new Team({userId: userId, team:[]})
+        await newTeam.save()
         resolve()        
     })
 };

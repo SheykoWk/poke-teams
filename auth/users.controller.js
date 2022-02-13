@@ -1,12 +1,16 @@
 const uuid = require("uuid");
+const mongoose = require('mongoose')
 const crypto = require("../tools/crypto");
 const teamsController = require("../teams/teams.controller");
+
+const User = mongoose.model("User", { username: String, password: String, UserId: String});
 
 let userDatabase = {};
 // '0001': {
 //     password: 'asd',
 //     userName: 'juan'
 // }
+
 
 const cleanUpUsers = () => {
     return new Promise((resolve, reject) => {
@@ -20,10 +24,12 @@ const registerUser = (username, password) => {
         //save a new user on database
         let hashedPwd = crypto.hashPasswordSync(password);
         let userId = uuid.v4();
-        userDatabase[userId] = {
+        let newUser = new User({
             username: username,
             password: hashedPwd,
-        };
+            userId: userId
+        })
+        await newUser.save()
         await teamsController.bootstrapTeam(userId);
         resolve();
     });
