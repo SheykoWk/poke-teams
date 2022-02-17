@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 let teamsDatabase = {};
 
-const Team = mongoose.model("Teams", {UserId: String, team: []});
+const Team = mongoose.model("Teams", {userId: String, team: []});
 
 
 const cleanUpTeam = () => {
