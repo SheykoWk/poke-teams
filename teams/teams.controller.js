@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const to = require('../tools/to').to
+
 let teamsDatabase = {};
 
 const Team = mongoose.model("Teams", {userId: String, team: []});
