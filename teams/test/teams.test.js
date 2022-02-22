@@ -6,12 +6,14 @@ chai.use(chaiHttp);
 const app = require("../../app").app;
 const usersController = require("../../auth/users.controller");
 const teamsController = require("../teams.controller");
-before((done) => {
-    usersController.registerUser("sheyko", "1234");
-    usersController.registerUser("admin", "4321");
-    done();
+
+beforeEach(async () => {
+    await usersController.registerUser("sheyko", "1234");
+    await usersController.registerUser("admin", "4321");
 });
-afterEach(async() => {
+
+afterEach(async () => {
+    await usersController.cleanUpUsers();
     await teamsController.cleanUpTeam();
 });
 
@@ -21,7 +23,7 @@ describe("Suite Team's test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 const token = res.body.token;
                 chai.assert.equal(res.status, 200);
@@ -59,7 +61,7 @@ describe("Suite Team's test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 const token = res.body.token;
                 chai.assert.equal(res.status, 200);
@@ -98,7 +100,7 @@ describe("Suite Team's test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 const token = res.body.token;
                 chai.assert.equal(res.status, 200);
@@ -142,7 +144,7 @@ describe("Suite Team's test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 const token = res.body.token;
                 chai.assert.equal(res.status, 200);
@@ -152,13 +154,13 @@ describe("Suite Team's test", () => {
                     .set("Authorization", `JWT ${token}`)
                     .end((err, res) => {
                         chai.request(app)
-                            .post('/team/pokemons')
-                            .send({name: 'Vibrava'})
-                            .set('Authorization', `JWT ${token}`)
+                            .post("/team/pokemons")
+                            .send({ name: "Vibrava" })
+                            .set("Authorization", `JWT ${token}`)
                             .end((err, res) => {
                                 chai.assert.equal(res.status, 400);
                                 done();
-                            })
+                            });
                     });
             });
     });

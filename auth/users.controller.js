@@ -2,7 +2,7 @@ const uuid = require("uuid");
 const mongoose = require("mongoose");
 const crypto = require("../tools/crypto");
 const teamsController = require("../teams/teams.controller");
-const to = require('../tools/to').to
+const { to } = require("../tools/to");
 
 const User = mongoose.model("User", {
     userId: String,
@@ -17,8 +17,8 @@ const User = mongoose.model("User", {
 // }
 
 const cleanUpUsers = () => {
-    return new Promise((resolve, reject) => {
-        User.deleteMany({}).exec();
+    return new Promise(async (resolve, reject) => {
+        await User.deleteMany({}).exec();
         resolve();
     });
 };
@@ -42,8 +42,8 @@ const registerUser = (username, password) => {
 const getUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         let [err, result] = await to(User.findOne({ userId: userId }).exec());
-        if(err){
-            return reject(err)
+        if (err) {
+            return reject(err);
         }
         resolve(result);
     });
@@ -51,9 +51,11 @@ const getUser = (userId) => {
 
 const getuserIdFromUserName = (username) => {
     return new Promise(async (resolve, reject) => {
-        let [err, result] = await to(User.findOne({ username: username }).exec());
-        if(err){
-            return reject(err)
+        let [err, result] = await to(
+            User.findOne({ username: username }).exec()
+        );
+        if (err) {
+            return reject(err);
         }
         resolve(result);
     });
@@ -61,8 +63,8 @@ const getuserIdFromUserName = (username) => {
 
 const checkUserCredentials = (username, password) => {
     return new Promise(async (resolve, reject) => {
-        let user = await getuserIdFromUserName(username);
-        if (user) {
+        let [err, user] = await to(getuserIdFromUserName(username));
+        if (!err || user) {
             //Check if the credentials are correct
             crypto.comparePassword(password, user.password, (err, result) => {
                 if (err) {
@@ -72,7 +74,7 @@ const checkUserCredentials = (username, password) => {
                 }
             });
         } else {
-            reject("Missing User");
+            reject(err);
         }
     });
 };

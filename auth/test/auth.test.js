@@ -1,14 +1,22 @@
 const chai = require("chai");
 const chaiHttp = require("chai-http");
+
 const { app } = require("../../app");
 const usersController = require("../users.controller");
+const teamsController = require("../../teams/teams.controller");
 
-before(async () => {  
+chai.use(chaiHttp);
+
+beforeEach(async () => {  
     await usersController.registerUser("sheyko", "1234");
     await usersController.registerUser("admin", "4321");
 })
 
-chai.use(chaiHttp);
+afterEach(async () => {
+    await usersController.cleanUpUsers()
+    await teamsController.cleanUpTeam()
+})
+
 
 describe("Suite Auth Test", () => {
     it("Shoul requrn 401 when no jwt available", (done) => {
@@ -32,7 +40,7 @@ describe("Suite Auth Test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 chai.assert.equal(res.status, 200);
                 done();
@@ -42,7 +50,7 @@ describe("Suite Auth Test", () => {
         chai.request(app)
             .post("/auth/login")
             .set("content-type", "application/json")
-            .send({ user: "sheyko", password: "1234" })
+            .send({ username: "sheyko", password: "1234" })
             .end((err, res) => {
                 chai.assert.equal(res.status, 200);
                 chai.request(app)
@@ -55,6 +63,3 @@ describe("Suite Auth Test", () => {
             });
     });
 });
-after(async () => {
-    await usersController.cleanUpUsers()
-})
